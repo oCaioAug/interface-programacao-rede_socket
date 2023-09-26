@@ -1,15 +1,17 @@
 import socket
 import threading
+import sys
 
-ip = str(input("Digite \"1\" p/ usar o Server padrão ou insira o IP do servidor desejado:\n"))
-
-if ip == "1":
+# Pega o IP inserido 
+if sys.argv[1]:
+    server_ip = str(sys.argv[1])
+else:
     server_ip = '152.89.254.25'
-else: 
-    server_ip = ip
 
-# server_ip = '152.89.254.25'
-server_port = 12345
+if 2 in sys.argv:
+    server_port = int(sys.argv[2])
+else:
+    server_port = 12345
 
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server_socket.bind((server_ip, server_port))

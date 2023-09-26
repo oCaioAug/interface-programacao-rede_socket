@@ -20,7 +20,6 @@ class Ui_MainWindow(QtCore.QObject):
     video_url_signal = pyqtSignal(str)
 
 
-
     def __init__(self):
         super().__init__()
 
@@ -45,15 +44,9 @@ class Ui_MainWindow(QtCore.QObject):
         self.old_new_position = 0
         self.resultad = False
         self.pausedold = None
-        self.logado = False
-
-        # Socket para se conectar ao servidor
-        self.server_ip = '192.168.18.62'#'152.89.254.25' # IP de origem do servidor
-        self.server_port = 12345  # Escolha a porta do servidor
-        self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.client_socket.connect((self.server_ip, self.server_port))
-
-        self.client_socket.send(("Connected," + str(hash)).encode('utf-8')) # Avisa para o servidor que alguem conectou
+        self.logado = False    
+        global conectado
+        conectado = False
 
     # Função de design do PYQT
     def setupUi(self, MainWindow):
@@ -108,6 +101,14 @@ class Ui_MainWindow(QtCore.QObject):
         self.frame_3.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_3.setObjectName("frame_3")
 
+        # Define a quarta frame (Frame para adicionar o IP ao chat)
+        self.frame_4 = QtWidgets.QFrame(self.frame)
+        self.frame_4.setGeometry(QtCore.QRect(750, 20, 841, 491))
+        self.frame_4.setStyleSheet("background-color: rgb(27, 29, 35);")
+        self.frame_4.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame_4.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_4.setObjectName("frame_4")
+
 # Estruturas de Frame - Fim
 
 # ----------------------------------------
@@ -130,6 +131,51 @@ class Ui_MainWindow(QtCore.QObject):
 
 # Estruturas de Botões do programa - Fim
 
+
+
+# Estrutura de IP - Inicio
+
+
+        # Chat de texto para escrever o nome do usuario
+        self.SendText3 = QtWidgets.QTextEdit(self.frame_4)
+        self.SendText3.setGeometry(QtCore.QRect(10, 400, 281, 21))
+        self.SendText3.setStyleSheet("background-color: rgb(40, 44, 52);")
+        self.SendText3.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.SendText3.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.SendText3.setObjectName("SendText")
+        self.SendText3.setStyleSheet("background-color: rgb(40, 44, 52); color: white; font-size: 14px;")
+
+
+
+        # Botão para adicionar o nome do ip
+        self.SyncButton3 = QtWidgets.QPushButton(self.frame_4)
+        self.SyncButton3.setGeometry(QtCore.QRect(10, 430, 281, 23))
+        self.SyncButton3.setFont(font)
+
+        # Css do botão
+        self.SyncButton3.setStyleSheet("QPushButton {\n"
+                                      "    border: 2px solid rgb(52, 59, 72);\n"
+                                      "    border-radius: 5px;    \n"
+                                      "    background-color: rgb(52, 59, 72);\n"
+                                      "    color: white; /* Add this line to set the text color to white */\n"
+                                      "}\n"
+                                      "\n"
+                                      "QPushButton:hover {\n"
+                                      "    background-color: rgb(57, 65, 80);\n"
+                                      "    border: 2px solid rgb(61, 70, 86);\n"
+                                      "}\n"
+                                      "\n"
+                                      "QPushButton:pressed {    \n"
+                                      "    background-color: rgb(35, 40, 49);\n"
+                                      "    border: 2px solid rgb(43, 50, 61);\n"
+                                      "}\n"
+                                      "")
+        self.SyncButton3.setObjectName("SyncButton")
+
+        # Completa a conexao ao servidor
+        self.SyncButton3.clicked.connect(self.addIp)
+
+# Estrutura de IP - Fim
 
 
 # Estrutura de Usuario - Inicio
@@ -225,27 +271,26 @@ class Ui_MainWindow(QtCore.QObject):
 
         # Css do botâo do youtube
         self.YoutubeButton.setStyleSheet("QPushButton {\n"
-                                         "    border: 2px solid rgb(52, 59, 72);\n"
-                                         "    border-radius: 5px;    \n"
-                                         "    background-color: rgb(52, 59, 72);\n"
-                                         "    color: white; /* Add this line to set the text color to white */\n"
-                                         "}\n"
-                                         "\n"
-                                         "QPushButton:hover {\n"
-                                         "    background-color: rgb(57, 65, 80);\n"
-                                         "    border: 2px solid rgb(61, 70, 86);\n"
-                                         "}\n"
-                                         "\n"
-                                         "QPushButton:pressed {    \n"
-                                         "    background-color: rgb(35, 40, 49);\n"
-                                         "    border: 2px solid rgb(43, 50, 61);\n"
-                                         "}\n"
-                                         "")
+                                        "    border: 2px solid rgb(52, 59, 72);\n"
+                                        "    border-radius: 5px;    \n"
+                                        "    background-color: rgb(52, 59, 72);\n"
+                                        "    color: white; /* Add this line to set the text color to white */\n"
+                                        "}\n"
+                                        "\n"
+                                        "QPushButton:hover {\n"
+                                        "    background-color: rgb(57, 65, 80);\n"
+                                        "    border: 2px solid rgb(61, 70, 86);\n"
+                                        "}\n"
+                                        "\n"
+                                        "QPushButton:pressed {    \n"
+                                        "    background-color: rgb(35, 40, 49);\n"
+                                        "    border: 2px solid rgb(43, 50, 61);\n"
+                                        "}\n"
+                                        "")
         self.YoutubeButton.setObjectName("YoutubeButton")
 
 
-
-        # Chat de texto para adicionar o link do video do yotubue
+        # Chat de texto para adicionar o link do video do youtube
         self.YoutubeText = QtWidgets.QTextEdit(self.frame)
         self.YoutubeText.setEnabled(True)
         self.YoutubeText.setGeometry(QtCore.QRect(10, 430, 631, 21))
@@ -277,6 +322,23 @@ class Ui_MainWindow(QtCore.QObject):
         self.webEngineView.setGeometry(QtCore.QRect(0, 10, 731, 411))
         self.webEngineView.setObjectName("webEngineView")
 
+
+    # Define o IP do servidor
+    def addIp(self):
+        # Socket para se conectar ao servidor
+
+        self.server_ip = self.SendText3.toPlainText() # Define o IP do servidor
+        self.server_port = 12345  # Escolha a porta do servidor
+        self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+        self.client_socket.connect((self.server_ip, self.server_port)) # Efetua conexao ao servidor
+        self.client_socket.send(("Connected," + str(hash)).encode('utf-8')) # Avisa para o servidor que alguem conectou
+
+        # Altera status p/ conectado = True
+        global conectado
+        conectado = True
+
+        self.frame_4.deleteLater()
 
     # Define quem é o usuario
     def adduser(self):
@@ -380,6 +442,7 @@ class Ui_MainWindow(QtCore.QObject):
         self.YoutubeButton.setText(_translate("MainWindow", "Enviar Video"))
         self.SendButton.setText(_translate("MainWindow", "Enviar"))
         self.SyncButton2.setText(_translate("MainWindow", "Adicionar Usuario"))
+        self.SyncButton3.setText(_translate("MainWindow", "Adicionar IP Servidor"))
 
 
     # Recebe os parametros do servidor
@@ -444,13 +507,16 @@ class Ui_MainWindow(QtCore.QObject):
         print(1)
         youtube_text = self.YoutubeText.toPlainText()
         if youtube_text:
-            import re
-            pattern = r"(?:v=|/embed/|youtu.be/)([A-Za-z0-9_-]+)"
-            match = re.search(pattern, youtube_text)
-            self.video_url = f"https://www.youtube.com/embed/{str(match.group(1))}?autoplay=1&mute=1"
-            self.webEngineView.setUrl(QtCore.QUrl(self.video_url))
-            self.client_socket.send(('YTBA' + str(match.group(1)) + ',' + str(hash)).encode('utf-8'))
-            self.valor = self.webEngineView.page().runJavaScript("document.querySelector('video').duration")
+            if conectado == True:
+                import re
+                pattern = r"(?:v=|/embed/|youtu.be/)([A-Za-z0-9_-]+)"
+                match = re.search(pattern, youtube_text)
+                self.video_url = f"https://www.youtube.com/embed/{str(match.group(1))}?autoplay=1&mute=1"
+                self.webEngineView.setUrl(QtCore.QUrl(self.video_url))
+                self.client_socket.send(('YTBA' + str(match.group(1)) + ',' + str(hash)).encode('utf-8'))
+                self.valor = self.webEngineView.page().runJavaScript("document.querySelector('video').duration")
+            else:
+                self.YoutubeText.setText("Não conectado ao servidor")
 
     def update_video_url(self, new_url):
         # This slot will run in the main thread
